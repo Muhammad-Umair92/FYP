@@ -1,17 +1,115 @@
 import React, { Component } from 'react';
 import {Image, Text, View, StyleSheet, Dimensions, TouchableOpacity} from "react-native";
-import { Button, Card, CardSection, Header} from '../components/common';
+import { Button, Card, CardSection, Header, Token} from '../components/common';
 import firebase from 'firebase';
 
 const {width, height} = Dimensions.get('window');
 
 export class TokenPage extends Component {
+
+    
+
+
+
+    constructor(){
+        super();{
+
+            this.state = {
+                CurrentToken: undefined,
+                Total: undefined,
+                yourToken : 0,
+                totalTokens : 0,
+                booked : true
+            }
+        }
+    }
+
     static navigationOptions = {
-        title: 'Book Your Token Here',
+        title: 'Get Your Token',
         headerTintColor: 'red',
         headerStyle: {backgroundColor: '#dfdfdf', justifyContent: 'center',},
         headerTitleStyle: {color: 'red', alignSelf: 'center', marginRight: 80},
     };
+
+    componentWillMount(){
+        var rootRef =  firebase.database().ref();
+        var companiesRef = rootRef.child('Companies/');
+        var companyRef = companiesRef.child('z6eJ41eZ3aMfyTToRIzkdy8Tett2/');
+        var currentTokenRef = companyRef.child('currentToken/');
+        
+        var userId = firebase.auth().currentUser.uid;
+        var usersRef = rootRef.child('Users/');
+        var userRef = usersRef.child(userId);
+        var userToken = userRef.child('userToken');
+        userToken.on('value',(snapshot)=>{
+            if(snapshot.val()==0 || snapshot.val()==null){
+                this.setState({yourToken: null});
+            }
+            else{
+                this.setState({yourToken:snapshot.val()});
+            }
+    });
+        
+        currentTokenRef.on('value',(snapshot) => {
+
+            this.setState({CurrentToken: snapshot.val()});
+        });
+        var tokenRef = rootRef.child('Tokens/');
+        tokenRef.on('value',(snapshot) => {
+            this.setState({Total: snapshot.val().Total})
+
+        })
+
+    }
+
+
+    bookNow(){
+        if(this.state.booked){
+
+        
+        // const { yourToken, totalTokens } = this.state;
+        // if (!this.state.booked) {
+        var rootRef =  firebase.database().ref();
+        var tokenRef = rootRef.child('Tokens/');
+      
+        var userId = firebase.auth().currentUser.uid;
+        var usersRef = rootRef.child('Users/');
+        var userRef = usersRef.child(userId);
+        // var userTokenRef = userRef.child('userToken');
+        
+        var user = userRef.update({'userToken':this.state.Total + 1});
+
+        tokenRef.once('value',(snapshot) => {
+        this.setState({totalTokens: snapshot.val()});
+
+        if(this.state.totalTokens != null){
+            tokenRef.update({Total : snapshot.val().Total + 1});
+        }
+        else{
+            tokenRef.update({Total : 1});
+        }
+
+
+        // firebase.database().ref('Tokens/').child({yourToken : this.state.totalTokens});
+        // console.log("+++++++++++++",snapshot.val());
+        // this.setState({totalTokens: 1 + snapshot.val().Total});
+        // this.setState({yourToken:  snapshot.val().Total + 1});
+        });
+        // firebase.database().ref('Tokens/').set({TokenNo : 1});
+        // firebase.database().ref('Tokens/').set({Total : this.state.totalTokens});
+
+        this.setState({booked: false});
+
+                    
+        // }
+
+    }
+
+    }
+
+
+
+
     render() {
         return(
             <View style={{flex:1}}>
@@ -20,49 +118,44 @@ export class TokenPage extends Component {
                         style={styles.splashImage}
                         source={require('../assets/images/bg.jpg')}
                     >
-                        {/*<Header headerText="AVAILABLE QATAARs" />*/}
-                        <Card>
-
-                            <CardSection>
-                                <Button >
-                                    Nadeem Medical
-                                </Button>
-                            </CardSection>
-                            <CardSection>
-                                <Button >
-                                    Dar-us-Sehat
-                                </Button>
-                            </CardSection>
-                            <CardSection>
-                                <Button>
-                                    Agha Khan Hospital
-                                </Button>
-                            </CardSection>
-                            <CardSection>
-                                <Button>
-                                    Liaquat National Hospital
-                                </Button>
-                            </CardSection>
-                            <CardSection>
-                                <Button >
-                                    Ibn-e-Seena Hospital
-                                </Button>
-                            </CardSection>
-                        </Card>
-                        <Card>
-                            <CardSection>
-                                {/*<Button onPress={() => firebase.auth().signOut()} >*/}
-                                {/*Log Out*/}
-                                {/*</Button>*/}
-                            </CardSection>
-                        </Card>
                     </Image>
+                    <Card style={{flex:2}}>
+                       
 
-                    {/*<Text>Home</Text>*/}
+                        <Token>
+                              Total Tokens = {this.state.Total}
+                        </Token>
 
-                    {/*<Button onPress={() => firebase.auth().signOut()} >*/}
-                    {/*Log Out*/}
-                    {/*</Button>*/}
+                        <Token>
+                              Your Token No. = {this.state.yourToken}
+                        </Token>
+
+                        <Token>
+                            Now Serving = {this.state.CurrentToken}
+
+                        </Token>
+
+
+
+                        <CardSection style={{flex:1, backgroundColor:'red'}}>
+                        <Button onPress={this.bookNow.bind(this)} >
+                        Book Now
+                        </Button>
+                        </CardSection>
+
+
+
+
+
+
+
+                     </Card>
+
+                   
+
+
+
+                   
                 </View>
                 <Card style={{flex:2}}>
                     <CardSection>

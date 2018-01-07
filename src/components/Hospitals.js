@@ -49,20 +49,9 @@ export class Hospitals extends Component {
                                 </Button>
                             </CardSection>
                         </Card>
-                        <Card>
-                            <CardSection>
-                                {/*<Button onPress={() => firebase.auth().signOut()} >*/}
-                                {/*Log Out*/}
-                                {/*</Button>*/}
-                            </CardSection>
-                        </Card>
+                       
                     </Image>
 
-                    {/*<Text>Home</Text>*/}
-
-                    {/*<Button onPress={() => firebase.auth().signOut()} >*/}
-                    {/*Log Out*/}
-                    {/*</Button>*/}
                 </View>
                 <Card style={{flex:2}}>
                     <CardSection>

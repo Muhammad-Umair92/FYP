@@ -40,6 +40,15 @@ class SignupForm extends Component {
             loading: false,
             error: ''
         });
+        
+        var userId = firebase.auth().currentUser.uid;
+        var rootRef =  firebase.database().ref();
+        // var tokenRef = rootRef.child('Tokens/');
+        var usersRef = rootRef.child('Users/');
+        var userRef = usersRef.child(userId);
+        var user = userRef.update({'userId':userId});
+
+        this.props.navigation.navigate('Home')
     }
 
     renderButton() {

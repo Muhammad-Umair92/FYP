@@ -49,13 +49,13 @@ export class Pumps extends Component {
                                 </Button>
                             </CardSection>
                         </Card>
-                        <Card>
-                            <CardSection>
+                        {/* <Card> */}
+                            {/* <CardSection> */}
                                 {/*<Button onPress={() => firebase.auth().signOut()} >*/}
                                 {/*Log Out*/}
                                 {/*</Button>*/}
-                            </CardSection>
-                        </Card>
+                            {/* </CardSection> */}
+                        {/* </Card> */}
                     </Image>
 
                     {/*<Text>Home</Text>*/}

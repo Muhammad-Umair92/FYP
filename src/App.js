@@ -38,7 +38,7 @@ export default class App extends Component {
                 this.setState({ loggedIn: false });
             }
         });
-
+        console.disableYellowBox = true;
     }
 
     renderContent() {
