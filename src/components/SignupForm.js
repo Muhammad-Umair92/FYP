@@ -12,7 +12,7 @@ class SignupForm extends Component {
         header: null
 
     };
-    state = { email: '', password: '', error: '', loading: false, mobile: '' };
+    state = { email: '', password: '', error: '', loading: false, mobile: '', name: '', };
 
     onButtonPress() {
         const { email, password } = this.state;
@@ -34,19 +34,31 @@ class SignupForm extends Component {
     }
 
     onLoginSuccess() {
-        this.setState({
-            email: '',
-            password: '',
-            loading: false,
-            error: ''
-        });
+        // this.setState({
+        //     name:"",
+        //     email: '',
+        //     password: '',
+        //     loading: false,
+        //     error: ''
+        // });
         
         var userId = firebase.auth().currentUser.uid;
         var rootRef =  firebase.database().ref();
         // var tokenRef = rootRef.child('Tokens/');
         var usersRef = rootRef.child('Users/');
         var userRef = usersRef.child(userId);
-        var user = userRef.update({'userId':userId});
+        var userIdRef = userRef.update({'userId':userId});
+
+        var userInfoRef = userRef.child('userInfo');
+        var userName = userInfoRef.update({'userName': this.state.name});
+        var userMobile = userInfoRef.update({'userMobile': this.state.mobile});
+        var userEmail = userInfoRef.update({'userEmail': this.state.email});
+        var userPass = userInfoRef.update({'userPass': this.state.password});
+
+        
+        
+        
+
 
         this.props.navigation.navigate('Home')
     }
@@ -75,6 +87,14 @@ class SignupForm extends Component {
                 <Header headerText="Please Sign Up" />
 
             <Card>
+            <CardSection>
+                    <Input
+                        placeholder="Name"
+                        label="Name   "
+                        value={this.state.name}
+                        onChangeText={name => this.setState({ name })}
+                    />
+                </CardSection>
 
                 <CardSection>
                     <Input

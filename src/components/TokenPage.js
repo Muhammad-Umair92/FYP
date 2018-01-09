@@ -19,7 +19,8 @@ export class TokenPage extends Component {
                 Total: undefined,
                 yourToken : 0,
                 totalTokens : 0,
-                booked : true
+                booked : true,
+                dateNow : (new Date().toDateString).toString
             }
         }
     }
@@ -31,11 +32,23 @@ export class TokenPage extends Component {
         headerTitleStyle: {color: 'red', alignSelf: 'center', marginRight: 80},
     };
 
+
     componentWillMount(){
+        
         var rootRef =  firebase.database().ref();
         var companiesRef = rootRef.child('Companies/');
-        var companyRef = companiesRef.child('z6eJ41eZ3aMfyTToRIzkdy8Tett2/');
+        var companyRef = companiesRef.child('rLkjptEBZsSaD8VCXlh4Ksyxi4z1/');
         var currentTokenRef = companyRef.child('currentToken/');
+        var reportRef = companyRef.child('Report/');
+        // var dateRef = reportRef.set(this.state.dateNow)
+        // if(dateRef === Date().toDateString){
+            // var currentTokenRef = dateRef.child('CurrentToken')
+            // var currToken = currentTokenRef.update(this.state.CurrentToken)
+        // }
+        // else{
+            // var dateAfterRef = reportRef.child(this.state.dateNow)
+            // console.log(dateAfterRef)
+        // }
         
         var userId = firebase.auth().currentUser.uid;
         var usersRef = rootRef.child('Users/');
@@ -56,32 +69,31 @@ export class TokenPage extends Component {
         });
         var tokenRef = rootRef.child('Tokens/');
         tokenRef.on('value',(snapshot) => {
-            this.setState({Total: snapshot.val().Total})
+            if(snapshot.val().Total == 0){
+                var user = userRef.update({'userToken':0});
+                this.setState({yourToken: 0});
 
+            }
+            
+                this.setState({Total: snapshot.val().Total})
+            
+            
         })
-
     }
-
 
     bookNow(){
         if(this.state.booked){
-
-        
         // const { yourToken, totalTokens } = this.state;
         // if (!this.state.booked) {
         var rootRef =  firebase.database().ref();
-        var tokenRef = rootRef.child('Tokens/');
-      
+        var tokenRef = rootRef.child('Tokens/');     
         var userId = firebase.auth().currentUser.uid;
         var usersRef = rootRef.child('Users/');
         var userRef = usersRef.child(userId);
         // var userTokenRef = userRef.child('userToken');
-        
         var user = userRef.update({'userToken':this.state.Total + 1});
-
         tokenRef.once('value',(snapshot) => {
         this.setState({totalTokens: snapshot.val()});
-
         if(this.state.totalTokens != null){
             tokenRef.update({Total : snapshot.val().Total + 1});
         }
