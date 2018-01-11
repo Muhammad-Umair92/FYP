@@ -26,12 +26,22 @@ class LoginForm extends Component {
       // .catch(() => {
         // firebase.auth().createUserWithEmailAndPassword(email, password)
         //   .then(this.onLoginSuccess.bind(this))
-          .catch(this.onLoginFail.bind(this));
+          // .catch(this.onLoginFail.bind(this));
       // });
+      .catch((err)=>{
+        if(this.state.email == '' || this.state.password == ''){
+          this.setState({ error: 'Please Fill All Fields', loading: false });
+        }
+        else{
+          this.setState({ error: err.message, loading: false });
+        }
+
+      });
+                    
   }
 
   onLoginFail() {
-    if(this.state.email == '' || this.state.password == '' || this.state.mobile == ''){
+    if(this.state.email == '' || this.state.password == ''){
       this.setState({ error: 'Please Fill All Fields', loading: false });
     }
     else {

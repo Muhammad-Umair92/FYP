@@ -15,17 +15,30 @@ class SignupForm extends Component {
     state = { email: '', password: '', error: '', loading: false, mobile: '', name: '', };
 
     onButtonPress() {
-        const { email, password } = this.state;
+        if(this.state.email == '' || this.state.password == '' || this.state.mobile == '' || this.state.name == ''){
+            this.setState({ error: 'Please Fill All Fields', loading: false });
+        }    
+        else if(/^[A-Za-z\s]+$/.test(this.state.name) != true){
+            this.setState({ error: 'Name only contains alphabets', loading: false });    
+        }
 
-        this.setState({ error: '', loading: true });
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then(this.onLoginSuccess.bind(this))
-                    .catch(this.onLoginFail.bind(this));
+        else if((this.state.mobile).length < 11){
+            this.setState({ error: 'Invalid Mobile Number', loading: false });
+        }
 
+        else{
+            const { email, password } = this.state;
+            this.setState({ error: '', loading: true });
+                    firebase.auth().createUserWithEmailAndPassword(email, password)
+                        .then(this.onLoginSuccess.bind(this))
+                        .catch((err)=>{
+                            this.setState({ error: err.message, loading: false });
+                                        });
+        }
     }
 
     onLoginFail() {
-        if(this.state.email == '' || this.state.password == '' || this.state.mobile == ''){
+        if(this.state.email == '' || this.state.password == '' || this.state.mobile == '' || this.state.name == ''){
             this.setState({ error: 'Please Fill All Fields', loading: false });
         }
         else {
@@ -98,6 +111,7 @@ class SignupForm extends Component {
 
                 <CardSection>
                     <Input
+                        keyboardType='email-address'
                         placeholder="user@gmail.com"
                         label="Email"
                         value={this.state.email}
@@ -107,6 +121,7 @@ class SignupForm extends Component {
 
                 <CardSection>
                     <Input
+                        maxLength={25}
                         secureTextEntry
                         placeholder="(min length 6)"
                         label="Password"
@@ -117,7 +132,9 @@ class SignupForm extends Component {
 
                 <CardSection>
                     <Input
-                        placeholder="+92 333 1234567"
+                        maxLength={11}
+                        keyboardType='numeric'
+                        placeholder="0333 1234567"
                         label="Mobile "
                         value={this.state.mobile}
                         onChangeText={mobile => this.setState({ mobile })}
